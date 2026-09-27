@@ -18,15 +18,7 @@ function setup() {
     r.InitWindow(width, height, "first raylib program");
     r.SetTargetFPS(50);
 }
-function distance() {
-    if (tx1 < tx2) {
-        r.DrawLine(x1, y1, x3, y3, r.BLACK);
 
-    } {
-        r.DrawLine(x1, y1, x2, y2, r.BLACK);
-
-    }
-}
 function square(x) {
     return (x ** 2);
 }
