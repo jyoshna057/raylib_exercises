@@ -36,7 +36,7 @@ function setup() {
     r.InitWindow(screenWidth, screenHeight, "first raylib program");
     r.SetTargetFPS(50);
 }
-function movement2() { //(x4, rightside2, move2, leftside2) {
+function movement2() {
     if (x4 === rightside2) {
         move2 = -5;
     }
@@ -47,7 +47,7 @@ function movement2() { //(x4, rightside2, move2, leftside2) {
     x4 = x4 + move2;
 
 }
-function movement1() { //(x1, rightside1, move1, leftside1) {
+function movement1() {
     if (x1 === rightside1) {
         move1 = -5;
     }
@@ -72,17 +72,9 @@ function movement3() {
 
 
 function update() {
-    movement1();//x1, rightside1, move1, leftside1, 1);
-    movement2(); //x4, rightside2, move2, leftside2, 2);
+    movement1();
+    movement2();
     movement3();
-    // if (x1 === rightside) {
-    //     move = -1;
-    // }
-
-    // if (x1 === leftside) {
-    //     move = 1;
-    // }
-    // x1 = x1 + move;
 }
 
 
