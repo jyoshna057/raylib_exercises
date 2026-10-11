@@ -1,109 +1,51 @@
 const r = require("raylib");
-const geometry = require("./geometry");
+const d = require("./detector.js");
+const s = require("./screenDimentions.js");
+const f = require("./feildRanges.js");
 
-const screenWidth = 800;
-const screenHeight = 500;
-const firstlength = screenHeight;
-const scannerBreadth1 = 30;
-const particalBreadth1 = screenWidth / 8;
-const particalBreadth2 = screenWidth / 20;
-const scannerBreadth2 = 30;
-const particalBreadth3 = screenWidth;
-const scannerBreadth3 = screenWidth;
-const secondHeight = 40;
-let x1 = 0;
-let y1 = 0;
-let x2 = 300;
-let x3 = 600;
-let x4 = 400;
-let x5 = 0;
-let x6 = 0;
-let y3 = 0;
-let y2 = 250;
-let rightside1 = (x2 + particalBreadth1) - scannerBreadth1;
-let leftside1 = 0;
-let rightside2 = screenWidth - scannerBreadth2;
-let leftside2 = x2 + particalBreadth1;
-let topside = 0;
-let bottomside = screenHeight - secondHeight;
-let move1 = 5;
-let move2 = 5;
-let move3 = 1;
-let scannercolour1;
-let scannercolour2;
-let scannercolour3;
+let detector1 = {};
+let detector2 = {};
+let detector3 = {};
+let p1 = {};
+let p2 = {};
+let p3 = {};
 function setup() {
-    r.InitWindow(screenWidth, screenHeight, "first raylib program");
+
+    r.SetTraceLogLevel(r.LOG_NONE);
+    r.InitWindow(s.screenWidth, s.screenHeight, "first raylib program");
     r.SetTargetFPS(50);
-}
-function movement2() {
-    if (x4 === rightside2) {
-        move2 = -5;
-    }
-
-    if (x4 === leftside2) {
-        move2 = +5;
-    }
-    x4 = x4 + move2;
+    detector1 = d.detectordim(0, 0, (s.screenWidth / 2) - 30, 0, 4, 30, s.screenHeight);
+    detector2 = d.detectordim(s.screenHeight - 100, 0, s.screenWidth - 30, s.screenWidth / 2, 4, 30, s.screenHeight);
+    detector3 = d.detectordim(0, 0, s.screenHeight - 40, 0, 4, s.screenWidth, 40);
+    p1 = f.particaldim(300, (s.screenWidth / 8) + 300, 100, s.screenHeight);
+    p2 = f.particaldim(600, s.screenWidth / 20 + 600, s.screenWidth / 20, s.screenHeight);
+    p3 = f.particaldim(250, 250 + 40, s.screenWidth, 40);
 
 }
-function movement1() {
-    if (x1 === rightside1) {
-        move1 = -5;
-    }
-
-    if (x1 === leftside1) {
-        move1 = +5;
-    }
-    x1 = x1 + move1;
-
-}
-function movement3() {
-    if (y3 === bottomside) {
-        move3 = -1;
-    }
-
-    if (y3 === topside) {
-        move3 = +1;
-    }
-    y3 = y3 + move3;
-
-}
-
 
 function update() {
-    movement1();
-    movement2();
-    movement3();
-}
-
-
-function Colourdetector(e) {
-    return (e ? r.RED : r.WHITE);
+    detector1.x = d.scannerupdate1(detector1);
+    detector2.x = d.scannerupdate1(detector2);
+    detector3.y = d.scannerupdate2(detector3);
 }
 
 function draw() {
-    let range1 = x1 + scannerBreadth1;
-    let range2 = x4 + scannerBreadth2;
-    let range3 = y3 + secondHeight;
-    let particalRange1 = x2 + particalBreadth1;
-    let particalRange2 = x3 + particalBreadth2;
-    let particalRange3 = y2 + secondHeight;
 
     r.BeginDrawing();
     r.ClearBackground(r.BLACK);
-    r.DrawRectangle(x2, y1, particalBreadth1, firstlength, r.SKYBLUE);
-    r.DrawRectangle(x5, y2, particalBreadth3, secondHeight, r.SKYBLUE);
-    r.DrawRectangle(x3, y1, particalBreadth2, firstlength, r.SKYBLUE);
-    scannercolour1 = geometry.ColourChange1(range1, x2, x1, particalRange1);
-    scannercolour2 = geometry.ColourChange1(range2, x3, x4, particalRange2);
-    scannercolour3 = geometry.ColourChange1(range3, y2, y3, particalRange3);
-    let colourfirst = Colourdetector(scannercolour1);
-    let coloursecond = Colourdetector(scannercolour2);
-    let colourthird = Colourdetector(scannercolour3);
-    r.DrawRectangle(x1, y1, scannerBreadth1, firstlength, colourfirst);
-    r.DrawRectangle(x4, y1, scannerBreadth1, firstlength, coloursecond);
-    r.DrawRectangle(x6, y3, scannerBreadth3, secondHeight, colourthird);
+
+
+    f.partical(p1.start, 0, p1.width, s.screenHeight);
+    f.partical(0, p3.start, s.screenWidth, p3.height);
+    f.partical(p2.start, 0, p2.width, s.screenHeight);
+
+    const detectorColourChange1 = f.overlapping(detector1.width, detector1.x, p1.start, p1.end) ? r.RED : r.WHITE;
+    const detectorColourChange2 = f.overlapping(detector2.width, detector2.x, p2.start, p2.end) ? r.RED : r.WHITE;
+    const detectorColourChange = f.overlapping(detector3.height, detector3.y, p3.start, p3.end) ? r.RED : r.WHITE;
+
+    f.scanner(detector1.x, detector1.y, detector1.width, s.screenHeight, detectorColourChange1);
+    f.scanner(detector2.x, detector2.y, detector2.width, s.screenHeight,detectorColourChange2);
+    f.scanner(detector3.x, detector3.y, s.screenWidth, detector3.height,detectorColourChange);
     r.EndDrawing();
 }
 
@@ -123,3 +65,11 @@ module.exports = {
     draw,
     teardown,
 };
+
+
+
+
+
+
+
+
